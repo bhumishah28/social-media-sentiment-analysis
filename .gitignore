@@ -1,32 +1,27 @@
-# Virtual environment
+# Virtual Environment
 venv/
-.venv/
 
-# Environment variables
-.env
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Raw and processed datasets
-data/raw/*
-data/processed/*
+# Environment Variables
+.env
 
-# Keep directories in Git
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-
-# Model artifacts
+# ML Artifacts
 artifacts/*
 !artifacts/.gitkeep
 
-# IDE
+# Dataset
+data/raw/social_media_data.csv
+
+# VS Code
 .vscode/
 
-# Operating system files
+# OS Files
 .DS_Store
-Thumbs.db/
+Thumbs.db

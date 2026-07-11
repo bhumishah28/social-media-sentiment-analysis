@@ -1,4 +1,7 @@
+import time
 from pathlib import Path
+
+import joblib
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -8,12 +11,21 @@ from data_loader import load_data
 from preprocessing import preprocess_data
 
 
+# -------------------------
+# Configuration
+# -------------------------
+
 RANDOM_STATE = 42
-SAMPLE_SIZE = 100_000
-TEST_SIZE = 0.2
+
+TRAIN_SAMPLE_SIZE = 800_000
+TEST_SIZE = 50_000
 
 MAX_FEATURES = 50_000
 
+
+# -------------------------
+# Project paths
+# -------------------------
 
 PROJECT_ROOT = (
     Path(__file__)
@@ -31,66 +43,117 @@ DATA_PATH = (
 )
 
 
-def train_model():
-    """
-    Load data, preprocess tweets, create TF-IDF features,
-    and train a Logistic Regression sentiment classifier.
-    """
+ARTIFACTS_DIR = (
+    PROJECT_ROOT
+    / "artifacts"
+)
 
-    print("Loading dataset...")
+
+MODEL_PATH = (
+    ARTIFACTS_DIR
+    / "sentiment_model.pkl"
+)
+
+
+VECTORIZER_PATH = (
+    ARTIFACTS_DIR
+    / "tfidf_vectorizer.pkl"
+)
+
+
+# -------------------------
+# Data preparation
+# -------------------------
+
+def prepare_data(
+    train_sample_size=TRAIN_SAMPLE_SIZE,
+):
+
+    preparation_start_time = time.time()
+
+
+    print("\nLoading dataset...")
 
     df = load_data(DATA_PATH)
 
-    print("Full dataset shape:", df.shape)
+    print(
+        "Full dataset shape:",
+        df.shape,
+    )
 
 
-    # Sample data for baseline experimentation
-    sample_df = df.sample(
-        n=SAMPLE_SIZE,
+    print("\nCreating fixed test set...")
+
+    train_pool, test_df = train_test_split(
+        df,
+        test_size=TEST_SIZE,
+        random_state=RANDOM_STATE,
+        stratify=df["target"],
+    )
+
+
+    print(
+        "Training pool shape:",
+        train_pool.shape,
+    )
+
+    print(
+        "Fixed test set shape:",
+        test_df.shape,
+    )
+
+
+    print("\nSampling training data...")
+
+    train_df = train_pool.sample(
+        n=train_sample_size,
         random_state=RANDOM_STATE,
     )
 
 
     print(
-        "Sample dataset shape:",
-        sample_df.shape,
-    )
-
-
-    print("Preprocessing tweets...")
-
-    processed_df = preprocess_data(
-        sample_df
-    )
-
-
-    X = processed_df["cleaned_text"]
-    y = processed_df["target"]
-
-
-    X_train, X_test, y_train, y_test = (
-        train_test_split(
-            X,
-            y,
-            test_size=TEST_SIZE,
-            random_state=RANDOM_STATE,
-            stratify=y,
-        )
+        "Training sample shape:",
+        train_df.shape,
     )
 
 
     print(
-        "Training samples:",
-        len(X_train),
+        "\nPreprocessing training data..."
     )
+
+    processed_train_df = preprocess_data(
+        train_df
+    )
+
 
     print(
-        "Testing samples:",
-        len(X_test),
+        "Preprocessing test data..."
+    )
+
+    processed_test_df = preprocess_data(
+        test_df
     )
 
 
-    print("Creating TF-IDF features...")
+    X_train = processed_train_df[
+        "cleaned_text"
+    ]
+
+    y_train = processed_train_df[
+        "target"
+    ]
+
+
+    X_test = processed_test_df[
+        "cleaned_text"
+    ]
+
+    y_test = processed_test_df[
+        "target"
+    ]
+
+
+    print("\nCreating TF-IDF features...")
 
     vectorizer = TfidfVectorizer(
         max_features=MAX_FEATURES,
@@ -126,9 +189,42 @@ def train_model():
     )
 
 
-    print(
-        "Training Logistic Regression model..."
+    preparation_time = (
+        time.time()
+        - preparation_start_time
     )
+
+
+    print(
+        f"\nData preparation time: "
+        f"{preparation_time:.2f} seconds"
+    )
+
+
+    return (
+        X_train_tfidf,
+        X_test_tfidf,
+        y_train,
+        y_test,
+        vectorizer,
+    )
+
+
+# -------------------------
+# Model training
+# -------------------------
+
+def train_model(
+    X_train,
+    y_train,
+):
+
+    print(
+        "\nTraining Logistic Regression..."
+    )
+
+
+    training_start_time = time.time()
 
 
     model = LogisticRegression(
@@ -138,8 +234,14 @@ def train_model():
 
 
     model.fit(
-        X_train_tfidf,
+        X_train,
         y_train,
+    )
+
+
+    training_time = (
+        time.time()
+        - training_start_time
     )
 
 
@@ -147,14 +249,75 @@ def train_model():
         "Training completed successfully."
     )
 
-
-    return (
-        model,
-        vectorizer,
-        X_test_tfidf,
-        y_test,
+    print(
+        f"Model training time: "
+        f"{training_time:.2f} seconds"
     )
 
 
+    return model
+
+
+# -------------------------
+# Save artifacts
+# -------------------------
+
+def save_artifacts(
+    model,
+    vectorizer,
+):
+
+    ARTIFACTS_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+
+    joblib.dump(
+        model,
+        MODEL_PATH,
+    )
+
+
+    joblib.dump(
+        vectorizer,
+        VECTORIZER_PATH,
+    )
+
+
+    print(
+        f"\nModel saved to: "
+        f"{MODEL_PATH}"
+    )
+
+    print(
+        f"Vectorizer saved to: "
+        f"{VECTORIZER_PATH}"
+    )
+
+
+# -------------------------
+# Main execution
+# -------------------------
+
 if __name__ == "__main__":
-    train_model()
+
+    (
+        X_train_tfidf,
+        X_test_tfidf,
+        y_train,
+        y_test,
+        vectorizer,
+    ) = prepare_data()
+
+
+    model = train_model(
+        X_train_tfidf,
+        y_train,
+    )
+
+
+    save_artifacts(
+        model,
+        vectorizer,
+    )
