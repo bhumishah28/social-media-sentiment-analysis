@@ -1,7 +1,7 @@
 import re
 import html
 from pathlib import Path
-from data_loader import load_data
+from src.data_loader import load_data
 
 def clean_text(text):
     text = text.lower()

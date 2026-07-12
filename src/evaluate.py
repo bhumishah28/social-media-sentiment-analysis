@@ -7,7 +7,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-from train import (
+from src.train import (
     prepare_data,
     train_models,
 )

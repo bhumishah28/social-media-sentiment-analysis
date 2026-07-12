@@ -7,8 +7,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
-from data_loader import load_data
-from preprocessing import preprocess_data
+from src.data_loader import load_data
+from src.preprocessing import preprocess_data
 
 
 # -------------------------

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import joblib
 
-from preprocessing import clean_text
+from src.preprocessing import clean_text
 
 
 # -------------------------
@@ -65,11 +65,11 @@ def predict_sentiment(text):
     confidence = probabilities.max()
 
 
-    if prediction == 1:
-        sentiment = "Positive"
-
-    else:
-        sentiment = "Negative"
+    sentiment = (
+    "Positive"
+    if prediction == 1
+    else "Negative"
+)
 
 
     return {
