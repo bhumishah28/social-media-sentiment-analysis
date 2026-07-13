@@ -66,7 +66,7 @@ def health_check():
 
 
 # ---------------------------------
-# Register Routers
+# Register appRouters
 # ---------------------------------
 
 app.include_router(
