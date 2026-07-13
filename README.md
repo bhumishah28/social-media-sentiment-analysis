@@ -1,42 +1,57 @@
-# SentimentScope
+#  Social Media Sentiment Analysis
 
-A full-stack Machine Learning web application that predicts the sentiment of social media posts using Logistic Regression, FastAPI, MongoDB Atlas, and React.
-
----
-
-## Features
-
-- Predicts sentiment as **Positive** or **Negative**
-- Displays prediction confidence
-- Stores every prediction in MongoDB Atlas
-- Analytics dashboard with:
-  - Total predictions
-  - Positive predictions
-  - Negative predictions
-  - Average confidence
-- Recent prediction history
-- Modern React frontend
-- FastAPI backend
-- REST API architecture
+A full-stack Machine Learning web application that predicts the sentiment of social media posts in real time using Natural Language Processing (NLP). The application provides instant sentiment prediction, stores prediction history in MongoDB Atlas, and displays real-time analytics through an interactive React dashboard.
 
 ---
 
-## Tech Stack
+##  Live Demo
+
+### Frontend
+https://social-media-sentiment-analysis-jade.vercel.app/
+
+### Backend API
+https://sentimentscope-sbc8.onrender.com
+
+### API Documentation (Swagger)
+https://sentimentscope-sbc8.onrender.com/docs
+
+---
+
+
+
+##  Features
+
+- Real-time sentiment prediction
+- Machine Learning powered NLP model
+- TF-IDF Vectorization
+- Logistic Regression Classifier
+- FastAPI REST API
+- React + Vite frontend
+- MongoDB Atlas database integration
+- Prediction history tracking
+- Live analytics dashboard
+- Responsive modern UI
+- Fully deployed cloud application
+
+---
+
+##  Tech Stack
 
 ### Machine Learning
 
 - Python
 - Scikit-learn
-- Logistic Regression
 - TF-IDF Vectorizer
+- Logistic Regression
 - NLTK
-- Pandas
 - NumPy
+- Pandas
 
 ### Backend
 
 - FastAPI
 - Uvicorn
+- Pydantic
 - MongoDB Atlas
 - PyMongo
 
@@ -47,118 +62,126 @@ A full-stack Machine Learning web application that predicts the sentiment of soc
 - Axios
 - CSS3
 
+### Deployment
+
+- Render (Backend)
+- Vercel (Frontend)
+- MongoDB Atlas
+
 ---
 
-## Project Structure
+##  Project Structure
 
-```text
-social-media-sentiment-analysis/
-
-├── artifacts/
+```
+social-media-sentiment-analysis
+│
+├── backend
+│   ├── database
+│   ├── routes
+│   ├── schemas
+│   ├── services
+│   └── main.py
+│
+├── frontend
+│   ├── src
+│   ├── public
+│   └── package.json
+│
+├── artifacts
 │   ├── sentiment_model.pkl
 │   └── tfidf_vectorizer.pkl
 │
-├── backend/
-│   ├── database/
-│   ├── routes/
-│   ├── schemas/
-│   ├── services/
-│   └── main.py
-│
-├── frontend/
-│
-├── src/
-│   ├── preprocessing.py
-│   ├── predict.py
-│   ├── train_model.py
-│   └── data_loader.py
-│
-├── data/
+├── src
 │
 ├── requirements.txt
-├── .env.example
 └── README.md
 ```
 
 ---
 
-## Installation
+##  How It Works
 
-### Clone the repository
+```
+User Input
+      │
+      ▼
+React Frontend
+      │
+      ▼
+FastAPI Backend
+      │
+      ▼
+TF-IDF Vectorizer
+      │
+      ▼
+Logistic Regression Model
+      │
+      ▼
+Sentiment Prediction
+      │
+      ├────────────► MongoDB Atlas
+      │                   │
+      │                   ▼
+      │          Prediction History
+      │
+      ▼
+Frontend Dashboard
+```
+
+---
+
+##  API Endpoints
+
+| Method | Endpoint | Description |
+|----------|----------|-------------|
+| GET | `/` | Root endpoint |
+| GET | `/health` | Health check |
+| POST | `/predict/` | Predict sentiment |
+| GET | `/history` | Prediction history |
+| GET | `/analytics` | Analytics summary |
+
+---
+
+##  Machine Learning Pipeline
+
+1. Text Cleaning
+2. Tokenization
+3. Stopword Removal
+4. TF-IDF Feature Extraction
+5. Logistic Regression Prediction
+6. Confidence Score Generation
+7. Store Prediction in MongoDB
+8. Display Result on Frontend
+
+---
+
+##  Local Installation
+
+### Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/social-media-sentiment-analysis.git
+git clone https://github.com/bhumishah28/social-media-sentiment-analysis.git
 
 cd social-media-sentiment-analysis
 ```
 
 ---
 
-### Create virtual environment
+### Backend Setup
 
 ```bash
 python -m venv venv
-```
 
-Activate it
-
-Windows
-
-```bash
 venv\Scripts\activate
-```
 
-Mac/Linux
-
-```bash
-source venv/bin/activate
-```
-
----
-
-### Install dependencies
-
-```bash
 pip install -r requirements.txt
-```
 
----
-
-### Configure Environment Variables
-
-Create a `.env` file in the project root.
-
-```env
-MONGODB_URI=your_connection_string
-
-DATABASE_NAME=SentimentAnalysis
-
-COLLECTION_NAME=predictions
-```
-
----
-
-### Run Backend
-
-```bash
 uvicorn backend.main:app --reload
 ```
 
-Backend runs on
-
-```
-http://localhost:8000
-```
-
-Swagger Docs
-
-```
-http://localhost:8000/docs
-```
-
 ---
 
-### Run Frontend
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -168,65 +191,62 @@ npm install
 npm run dev
 ```
 
-Frontend
+---
 
+##  Environment Variables
+
+### Backend
+
+Create a `.env` file:
+
+```env
+MONGODB_URI=YOUR_MONGODB_URI
+
+DATABASE_NAME=sentiment_db
+
+COLLECTION_NAME=predictions
+
+FRONTEND_ORIGINS=http://localhost:5173
 ```
-http://localhost:5173
+
+---
+
+### Frontend
+
+Create `.env.local`
+
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+Production
+
+```env
+VITE_API_BASE_URL=https://sentimentscope-sbc8.onrender.com
 ```
 
 ---
 
-## API Endpoints
 
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/predict/` | Predict sentiment |
-| GET | `/history` | View recent predictions |
-| GET | `/analytics` | View analytics |
-| GET | `/health` | Health check |
+##  Learning Outcomes
 
----
+This project demonstrates:
 
-## Screenshots
-
-### Home Page
-
-_Add screenshot here_
-
-### Prediction
-
-_Add screenshot here_
-
-### Analytics Dashboard
-
-_Add screenshot here_
+- End-to-End Machine Learning Deployment
+- NLP Pipeline Development
+- FastAPI REST API Development
+- React Frontend Development
+- MongoDB Atlas Integration
+- Cloud Deployment
+- REST API Integration
+- Production-ready Project Structure
 
 ---
 
-## Future Improvements
-
-- User Authentication
-- Multi-class Sentiment Analysis
-- Deep Learning Models (LSTM/BERT)
-- Docker Deployment
-- Charts & Visualizations
-- Export Prediction History
-- Batch Predictions
-
----
-
-## Author
+##  Author
 
 **Bhumi Shah**
 
-GitHub:
+GitHub
+
 https://github.com/bhumishah28
-
-LinkedIn:
-_Add your LinkedIn URL here_
-
----
-
-## License
-
-This project is licensed under the MIT License.
